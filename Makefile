@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sdunckel <sdunckel@student.42.fr>          +#+  +:+       +#+         #
+#    By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/10/07 12:02:19 by sdunckel          #+#    #+#              #
-#    Updated: 2019/10/24 22:43:52 by sdunckel         ###   ########.fr        #
+#    Created: 2021/03/23 22:29:24 by jinspark          #+#    #+#              #
+#    Updated: 2021/03/23 22:29:25 by jinspark         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
