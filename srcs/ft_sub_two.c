@@ -6,7 +6,7 @@
 /*   By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 22:29:08 by jinspark          #+#    #+#             */
-/*   Updated: 2021/03/28 23:14:35 by jinspark         ###   ########.fr       */
+/*   Updated: 2021/03/29 18:29:20 by jinspark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int		ft_atoi_printf(char *str, int *i)
 	return (atoi);
 }
 
-char	*ft_strdup_l(char *s, t_printf *backup)
+char	*ft_strdup_l(char *s, t_printf *bu)
 {
 	char	*str;
 	int		i;
@@ -60,8 +60,8 @@ char	*ft_strdup_l(char *s, t_printf *backup)
 
 	i = 0;
 	len = ft_strlen(s);
-	if (backup->precision && backup->precision_width < len)
-		len = backup->precision_width;
+	if (bu->precision && bu->precision_width < len)
+		len = bu->precision_width;
 	if (!(str = ft_calloc(len + 1, sizeof(char))))
 		return (NULL);
 	while (i < len)
@@ -73,30 +73,30 @@ char	*ft_strdup_l(char *s, t_printf *backup)
 	return (str);
 }
 
-void	ft_set_precision(t_printf *backup)
+void	ft_set_precision(t_printf *bu)
 {
-	backup->precision = 1;
-	backup->precision_parsing = 1;
-	backup->precision_width = 0;
+	bu->precision = 1;
+	bu->precision_parsing = 1;
+	bu->precision_width = 0;
 }
 
-void	ft_reset_flags(t_printf *backup)
+void	ft_reset_flags(t_printf *bu)
 {
-	backup->width = 0;
-	backup->precision = 0;
-	backup->precision_width = 0;
-	backup->precision_parsing = 0;
-	backup->converter = 0;
-	backup->minus = 0;
-	backup->zero = 0;
-	backup->plus = 0;
-	backup->space = 0;
-	backup->sharp = 0;
-	backup->len = 0;
-	backup->sp_len = 0;
-	backup->is_int = 0;
-	backup->h_count = 0;
-	backup->l_count = 0;
-	backup->n = 0;
-	backup->u = 0;
+	bu->width = 0;
+	bu->precision = 0;
+	bu->precision_width = 0;
+	bu->precision_parsing = 0;
+	bu->converter = 0;
+	bu->minus = 0;
+	bu->zero = 0;
+	bu->plus = 0;
+	bu->space = 0;
+	bu->sharp = 0;
+	bu->len = 0;
+	bu->sp_len = 0;
+	bu->is_int = 0;
+	bu->h_count = 0;
+	bu->l_count = 0;
+	bu->n = 0;
+	bu->u = 0;
 }

@@ -6,94 +6,94 @@
 /*   By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 22:29:14 by jinspark          #+#    #+#             */
-/*   Updated: 2021/03/28 20:34:07 by jinspark         ###   ########.fr       */
+/*   Updated: 2021/03/29 18:29:35 by jinspark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_check_flag(char *str, va_list ap, t_printf *backup)
+void	ft_check_flag(char *str, va_list ap, t_printf *bu)
 {
-	if (str[backup->i] == '*')
+	if (str[bu->i] == '*')
 	{
-		if (backup->precision_parsing)
-			backup->precision_width = va_arg(ap, int);
+		if (bu->precision_parsing)
+			bu->precision_width = va_arg(ap, int);
 		else
-			backup->width = va_arg(ap, int);
+			bu->width = va_arg(ap, int);
 	}
-	if (str[backup->i] == '0' && !backup->minus && !backup->precision_parsing)
-		backup->zero = 1;
-	if (str[backup->i] > '0' && str[backup->i] <= '9' && !backup->precision_parsing)
-		backup->width = ft_atoi_printf(str, &backup->i);
-	if (str[backup->i] >= '0' && str[backup->i] <= '9' && backup->precision_parsing)
-		backup->precision_width = ft_atoi_printf(str, &backup->i);
-	backup->precision_parsing = 0;
-	if (str[backup->i] == '-')
+	if (str[bu->i] == '0' && !bu->minus && !bu->precision_parsing)
+		bu->zero = 1;
+	if (str[bu->i] > '0' && str[bu->i] <= '9' && !bu->precision_parsing)
+		bu->width = ft_atoi_printf(str, &bu->i);
+	if (str[bu->i] >= '0' && str[bu->i] <= '9' && bu->precision_parsing)
+		bu->precision_width = ft_atoi_printf(str, &bu->i);
+	bu->precision_parsing = 0;
+	if (str[bu->i] == '-')
 	{
-		backup->zero = 0;
-		backup->minus = 1;
+		bu->zero = 0;
+		bu->minus = 1;
 	}
-	str[backup->i] == '.' ? ft_set_precision(backup) : 0;
-	str[backup->i] == ' ' ? backup->space = 1 : 0;
-	str[backup->i] == '+' ? backup->plus = 1 : 0;
-	str[backup->i] == '#' ? backup->sharp = 1 : 0;
-	str[backup->i] == 'l' ? backup->l_count += 1 : 0;
-	str[backup->i] == 'h' ? backup->h_count += 1 : 0;
+	str[bu->i] == '.' ? ft_set_precision(bu) : 0;
+	str[bu->i] == ' ' ? bu->space = 1 : 0;
+	str[bu->i] == '+' ? bu->plus = 1 : 0;
+	str[bu->i] == '#' ? bu->sharp = 1 : 0;
+	str[bu->i] == 'l' ? bu->l_count += 1 : 0;
+	str[bu->i] == 'h' ? bu->h_count += 1 : 0;
 }
 
-int		ft_parse2(char *str, va_list ap, t_printf *backup)
+int		ft_parse2(char *str, va_list ap, t_printf *bu)
 {
 	char	*sp;
 	char	*c;
 
-	while (!ft_is_flag(str[backup->i]))
+	while (!ft_is_flag(str[bu->i]))
 	{
-		ft_check_flag(str, ap, backup);
-		if (str[backup->i + 1] == '\0')
+		ft_check_flag(str, ap, bu);
+		if (str[bu->i + 1] == '\0')
 			return (0);
-		if (!ft_from_sub(str[backup->i + 1]))
+		if (!ft_from_sub(str[bu->i + 1]))
 		{
-			c = ft_c_to_str(str[backup->i + 1]);
-			backup->len = 1;
-			backup->minus ? ft_add_to_buff(backup, c, 1) : 0;
-			sp = ft_print_sp(backup);
-			ft_add_to_buff(backup, sp, backup->sp_len);
-			!backup->minus ? ft_add_to_buff(backup, c, 1) : 0;
+			c = ft_c_to_str(str[bu->i + 1]);
+			bu->len = 1;
+			bu->minus ? ft_add_to_buff(bu, c, 1) : 0;
+			sp = ft_print_sp(bu);
+			ft_add_to_buff(bu, sp, bu->sp_len);
+			!bu->minus ? ft_add_to_buff(bu, c, 1) : 0;
 			free(c);
 			free(sp);
-			backup->i++;
+			bu->i++;
 			return (0);
 		}
-		backup->i++;
+		bu->i++;
 	}
 	return (1);
 }
 
-void	ft_parse(char *str, va_list ap, t_printf *backup)
+void	ft_parse(char *str, va_list ap, t_printf *bu)
 {
-	backup->i++;
-	ft_reset_flags(backup);
-	if (!ft_parse2(str, ap, backup))
+	bu->i++;
+	ft_reset_flags(bu);
+	if (!ft_parse2(str, ap, bu))
 		return ;
-	if (backup->width < 0)
+	if (bu->width < 0)
 	{
-		backup->minus = 1;
-		backup->zero = 0;
-		backup->width = -backup->width;
+		bu->minus = 1;
+		bu->zero = 0;
+		bu->width = -bu->width;
 	}
-	if (backup->precision_width < 0)
-		backup->precision = 0;
-	backup->precision && backup->precision_width >= 0 ? backup->zero = 0 : 0;
-	backup->converter = str[backup->i];
-	str[backup->i] == 'c' ? ft_convert_c(ap, backup) : 0;
-	str[backup->i] == 's' ? ft_convert_str(ap, backup) : 0;
-	str[backup->i] == 'p' ? ft_convert_p(ap, backup) : 0;
-	str[backup->i] == 'd' || str[backup->i] == 'i' ? ft_convert_int(ap, backup) : 0;
-	str[backup->i] == 'u' ? ft_convert_uint(ap, backup) : 0;
-	str[backup->i] == 'x' ? ft_convert_x(ap, backup) : 0;
-	str[backup->i] == 'X' ? ft_convert_x(ap, backup) : 0;
-	str[backup->i] == '%' ? ft_convert_c(ap, backup) : 0;
-	str[backup->i] == 'n' ? ft_convert_n(ap, backup) : 0;
+	if (bu->precision_width < 0)
+		bu->precision = 0;
+	bu->precision && bu->precision_width >= 0 ? bu->zero = 0 : 0;
+	bu->converter = str[bu->i];
+	str[bu->i] == 'c' ? ft_convert_c(ap, bu) : 0;
+	str[bu->i] == 's' ? ft_convert_str(ap, bu) : 0;
+	str[bu->i] == 'p' ? ft_convert_p(ap, bu) : 0;
+	str[bu->i] == 'd' || str[bu->i] == 'i' ? ft_convert_int(ap, bu) : 0;
+	str[bu->i] == 'u' ? ft_convert_uint(ap, bu) : 0;
+	str[bu->i] == 'x' ? ft_convert_x(ap, bu) : 0;
+	str[bu->i] == 'X' ? ft_convert_x(ap, bu) : 0;
+	str[bu->i] == '%' ? ft_convert_c(ap, bu) : 0;
+	str[bu->i] == 'n' ? ft_convert_n(ap, bu) : 0;
 }
 
 size_t	ft_is_flag(char c)
