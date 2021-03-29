@@ -6,97 +6,97 @@
 /*   By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 22:29:19 by jinspark          #+#    #+#             */
-/*   Updated: 2021/03/23 22:29:20 by jinspark         ###   ########.fr       */
+/*   Updated: 2021/03/28 16:13:16 by jinspark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_dump_buffer(t_printf *tab)
+void	ft_dump_buffer(t_printf *backup)
 {
-	write(1, tab->buf, tab->buf_count);
-	tab->buf_count = 0;
+	write(1, backup->buf, backup->buf_count);
+	backup->buf_count = 0;
 }
 
-void	ft_add_to_buff(t_printf *tab, char *str, int len)
+void	ft_add_to_buff(t_printf *backup, char *str, int len)
 {
 	int		i;
 
 	i = 0;
-	tab->ret += len;
+	backup->ret += len;
 	while (i < len)
 	{
-		tab->buf[tab->buf_count] = str[i];
-		tab->buf_count++;
-		if (tab->buf_count == BUFFER_SIZE)
-			ft_dump_buffer(tab);
+		backup->buf[backup->buf_count] = str[i];
+		backup->buf_count++;
+		if (backup->buf_count == BUFFER_SIZE)
+			ft_dump_buffer(backup);
 		i++;
 	}
 }
 
-void	ft_print_normal(t_printf *tab, char *str)
+void	ft_print_normal(t_printf *backup, char *str)
 {
 	int		len;
 
 	len = 0;
-	while (str[tab->i] && str[tab->i] != '%')
+	while (str[backup->i] && str[backup->i] != '%')
 	{
-		tab->buf[tab->buf_count] = str[tab->i];
-		tab->buf_count++;
+		backup->buf[backup->buf_count] = str[backup->i];
+		backup->buf_count++;
 		len++;
-		if (tab->buf_count == BUFFER_SIZE)
-			ft_dump_buffer(tab);
-		tab->i++;
+		if (backup->buf_count == BUFFER_SIZE)
+			ft_dump_buffer(backup);
+		backup->i++;
 	}
-	tab->ret += len;
-	tab->i--;
+	backup->ret += len;
+	backup->i--;
 }
 
-void	ft_init_struct(t_printf *tab)
+void	ft_init_struct(t_printf *backup)
 {
-	tab->buf_count = 0;
-	tab->ret = 0;
-	tab->width = 0;
-	tab->precision = 0;
-	tab->precision_width = 0;
-	tab->precision_parsing = 0;
-	tab->converter = 0;
-	tab->minus = 0;
-	tab->zero = 0;
-	tab->plus = 0;
-	tab->space = 0;
-	tab->sharp = 0;
-	tab->len = 0;
-	tab->sp_len = 0;
-	tab->is_int = 0;
-	tab->h_count = 0;
-	tab->l_count = 0;
-	tab->n = 0;
-	tab->u = 0;
-	tab->i = 0;
+	backup->buf_count = 0;
+	backup->ret = 0;
+	backup->width = 0;
+	backup->precision = 0;
+	backup->precision_width = 0;
+	backup->precision_parsing = 0;
+	backup->converter = 0;
+	backup->minus = 0;
+	backup->zero = 0;
+	backup->plus = 0;
+	backup->space = 0;
+	backup->sharp = 0;
+	backup->len = 0;
+	backup->sp_len = 0;
+	backup->is_int = 0;
+	backup->h_count = 0;
+	backup->l_count = 0;
+	backup->n = 0;
+	backup->u = 0;
+	backup->i = 0;
 }
 
 int		ft_printf(const char *str, ...)
 {
-	t_printf	tab;
+	t_printf	backup;
 	va_list		ap;
 
-	ft_init_struct(&tab);
+	ft_init_struct(&backup);
 	va_start(ap, str);
-	while (str[tab.i])
+	while (str[backup.i])
 	{
-		if (str[tab.i] == '%')
+		if (str[backup.i] == '%')
 		{
-			if (str[tab.i + 1] == '\0')
+			if (str[backup.i + 1] == '\0')
 				break ;
-			if (ft_is_from_pf(str[tab.i + 1]))
-				ft_parse((char*)str, ap, &tab);
+			if (ft_from_sub(str[backup.i + 1]))
+				ft_parse((char*)str, ap, &backup);
 		}
 		else
-			ft_print_normal(&tab, (char*)str);
-		tab.i++;
+			ft_print_normal(&backup, (char*)str);
+		backup.i++;
 	}
 	va_end(ap);
-	ft_dump_buffer(&tab);
-	return (tab.ret);
+	ft_dump_buffer(&backup);
+	return (backup.ret);
 }

@@ -6,106 +6,106 @@
 /*   By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 22:28:37 by jinspark          #+#    #+#             */
-/*   Updated: 2021/03/23 22:28:39 by jinspark         ###   ########.fr       */
+/*   Updated: 2021/03/29 17:03:34 by jinspark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_convert_str(va_list ap, t_printf *tab)
+void	ft_convert_str(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
-	if (tab->precision && tab->precision_width < 0)
-		tab->precision_width = -tab->precision_width;
+	if (backup->precision && backup->precision_width < 0)
+		backup->precision_width = -backup->precision_width;
 	if (!(str = va_arg(ap, char *)))
-		str = ft_strdup_l("(null)", tab);
+		str = ft_strdup_l("(null)", backup);
 	else
-		str = ft_strdup_l(str, tab);
-	tab->len = ft_strlen(str);
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+		str = ft_strdup_l(str, backup);
+	backup->len = ft_strlen(str);
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }
 
-void	ft_convert_c(va_list ap, t_printf *tab)
+void	ft_convert_c(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
 	str = NULL;
-	tab->len = 1;
-	tab->converter == 'c' ? str = ft_c_to_str(va_arg(ap, int)) : 0;
-	tab->converter == '%' ? str = ft_c_to_str('%') : 0;
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+	backup->len = 1;
+	backup->converter == 'c' ? str = ft_c_to_str(va_arg(ap, int)) : 0;
+	backup->converter == '%' ? str = ft_c_to_str('%') : 0;
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }
 
-void	ft_convert_n(va_list ap, t_printf *tab)
+void	ft_convert_n(va_list ap, t_printf *backup)
 {
 	intmax_t	*n;
 
-	if (tab->l_count >= 2)
+	if (backup->l_count >= 2)
 		n = (intmax_t *)va_arg(ap, long long *);
-	else if (tab->l_count == 1)
+	else if (backup->l_count == 1)
 		n = (intmax_t *)va_arg(ap, long *);
-	else if (tab->h_count && ((tab->h_count % 2) == 0))
+	else if (backup->h_count && ((backup->h_count % 2) == 0))
 		n = (intmax_t *)((char *)va_arg(ap, int *));
-	else if (tab->h_count && ((tab->h_count % 2) != 0))
+	else if (backup->h_count && ((backup->h_count % 2) != 0))
 		n = (intmax_t *)((short *)va_arg(ap, int *));
 	else
 		n = (intmax_t *)va_arg(ap, int *);
 	if (!n)
 		return ;
-	*n = tab->ret;
+	*n = backup->ret;
 }
 
-void	ft_convert_x(va_list ap, t_printf *tab)
+void	ft_convert_x(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
 	str = NULL;
-	tab->is_int = 1;
-	ft_size_u(ap, tab);
-	tab->converter == 'x' ? str = ft_itoa_base(tab->u, "0123456789abcdef") : 0;
-	tab->converter == 'X' ? str = ft_itoa_base(tab->u, "0123456789ABCDEF") : 0;
-	tab->len = ft_strlen(str);
-	str = ft_num_precision(str, tab);
-	tab->len = ft_strlen(str);
-	if (tab->u == 0 && tab->precision && tab->precision_width == 0
-		&& !tab->width)
+	backup->is_int = 1;
+	ft_size_u(ap, backup);
+	backup->converter == 'x' ? str = ft_itoa_base(backup->u, "0123456789abcdef") : 0;
+	backup->converter == 'X' ? str = ft_itoa_base(backup->u, "0123456789ABCDEF") : 0;
+	backup->len = ft_strlen(str);
+	str = ft_num_precision(str, backup);
+	backup->len = ft_strlen(str);
+	if (backup->u == 0 && backup->precision && backup->precision_width == 0
+		&& !backup->width)
 	{
 		free(str);
 		return ;
 	}
-	if (tab->u == 0 && tab->precision && tab->precision_width == 0)
+	if (backup->u == 0 && backup->precision && backup->precision_width == 0)
 	{
 		free(str);
 		str = ft_strdup(" ");
 	}
-	tab->sharp && tab->u ? tab->len += 2 : 0;
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+	backup->sharp && backup->u ? backup->len += 2 : 0;
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }
 
-void	ft_convert_p(va_list ap, t_printf *tab)
+void	ft_convert_p(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
-	tab->u = va_arg(ap, long unsigned);
-	str = ft_itoa_base(tab->u, "0123456789abcdef");
-	tab->precision ? tab->zero = 0 : 0;
-	tab->len = ft_strlen(str);
-	str = ft_num_precision(str, tab);
-	tab->len = ft_strlen(str) + 2;
-	if (tab->u == 0 && tab->precision && tab->precision_width == 0)
+	backup->u = va_arg(ap, unsigned long);
+	str = ft_itoa_base(backup->u, "0123456789abcdef");
+	backup->precision ? backup->zero = 0 : 0;
+	backup->len = ft_strlen(str);
+	str = ft_num_precision(str, backup);
+	backup->len = ft_strlen(str) + 2;
+	if (backup->u == 0 && backup->precision && backup->precision_width == 0)
 	{
 		free(str);
 		str = ft_strdup("");
-		tab->len -= 1;
+		backup->len -= 1;
 	}
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }

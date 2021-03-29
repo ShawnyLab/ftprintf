@@ -6,7 +6,7 @@
 #    By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/23 22:29:24 by jinspark          #+#    #+#              #
-#    Updated: 2021/03/23 22:29:25 by jinspark         ###   ########.fr        #
+#    Updated: 2021/03/28 23:15:03 by jinspark         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,8 @@ SRCS_LIST		= \
 					ft_parse.c \
 					ft_convert.c \
 					ft_convert_int.c \
-					ft_ft.c \
-					ft_ft2.c 
+					ft_sub.c \
+					ft_sub_two.c 
 
 SRCS			= $(addprefix ${FOLDER}/, ${SRCS_LIST})
 

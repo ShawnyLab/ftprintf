@@ -6,90 +6,90 @@
 /*   By: jinspark <jinspark@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/23 22:28:32 by jinspark          #+#    #+#             */
-/*   Updated: 2021/03/23 22:28:33 by jinspark         ###   ########.fr       */
+/*   Updated: 2021/03/28 23:19:52 by jinspark         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_size_int(va_list ap, t_printf *tab)
+void	ft_size_int(va_list ap, t_printf *backup)
 {
-	if (tab->l_count >= 2)
-		tab->n = (intmax_t)va_arg(ap, long long);
-	else if (tab->l_count == 1)
-		tab->n = (intmax_t)va_arg(ap, long);
-	else if (tab->h_count && ((tab->h_count % 2) == 0))
-		tab->n = (intmax_t)((char)va_arg(ap, int));
-	else if (tab->h_count && ((tab->h_count % 2) != 0))
-		tab->n = (intmax_t)((short)va_arg(ap, int));
+	if (backup->l_count >= 2)
+		backup->n = (intmax_t)va_arg(ap, long long);
+	else if (backup->l_count == 1)
+		backup->n = (intmax_t)va_arg(ap, long);
+	else if (backup->h_count && ((backup->h_count % 2) == 0))
+		backup->n = (intmax_t)((char)va_arg(ap, int));
+	else if (backup->h_count && ((backup->h_count % 2) != 0))
+		backup->n = (intmax_t)((short)va_arg(ap, int));
 	else
-		tab->n = (intmax_t)va_arg(ap, int);
+		backup->n = (intmax_t)va_arg(ap, int);
 }
 
-void	ft_size_u(va_list ap, t_printf *tab)
+void	ft_size_u(va_list ap, t_printf *backup)
 {
-	if (tab->l_count >= 2)
-		tab->u = (uintmax_t)va_arg(ap, unsigned long long);
-	else if (tab->l_count == 1)
-		tab->u = (uintmax_t)va_arg(ap, unsigned long);
-	else if (tab->h_count && ((tab->h_count % 2) == 0))
-		tab->u = (uintmax_t)((unsigned char)va_arg(ap, int));
-	else if (tab->h_count && ((tab->h_count % 2) != 0))
-		tab->u = (uintmax_t)((unsigned short)va_arg(ap, int));
+	if (backup->l_count >= 2)
+		backup->u = (uintmax_t)va_arg(ap, unsigned long long);
+	else if (backup->l_count == 1)
+		backup->u = (uintmax_t)va_arg(ap, unsigned long);
+	else if (backup->h_count && ((backup->h_count % 2) == 0))
+		backup->u = (uintmax_t)((unsigned char)va_arg(ap, int));
+	else if (backup->h_count && ((backup->h_count % 2) != 0))
+		backup->u = (uintmax_t)((unsigned short)va_arg(ap, int));
 	else
-		tab->u = (uintmax_t)va_arg(ap, unsigned int);
+		backup->u = (uintmax_t)va_arg(ap, unsigned int);
 }
 
-void	ft_convert_int(va_list ap, t_printf *tab)
+void	ft_convert_int(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
-	tab->is_int = 1;
-	ft_size_int(ap, tab);
-	str = itoa_printf(tab->n);
-	tab->len = ft_intlen(tab->n);
-	str = ft_num_precision(str, tab);
-	tab->len = ft_strlen(str);
-	(tab->n < 0) ? tab->len++ : 0;
-	(tab->n >= 0) && (tab->plus || tab->space) ? tab->len++ : 0;
-	if (tab->n == 0 && tab->precision && tab->precision_width == 0
-		&& !tab->width)
+	backup->is_int = 1;
+	ft_size_int(ap, backup);
+	str = itoa_printf(backup->n);
+	backup->len = ft_intlen(backup->n);
+	str = ft_num_precision(str, backup);
+	backup->len = ft_strlen(str);
+	(backup->n < 0) ? backup->len++ : 0;
+	(backup->n >= 0) && (backup->plus || backup->space) ? backup->len++ : 0;
+	if (backup->n == 0 && backup->precision && backup->precision_width == 0
+		&& !backup->width)
 	{
 		free(str);
 		return ;
 	}
-	if (tab->n == 0 && tab->precision && tab->precision_width == 0)
+	if (backup->n == 0 && backup->precision && backup->precision_width == 0)
 	{
 		free(str);
 		str = ft_strdup(" ");
 	}
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }
 
-void	ft_convert_uint(va_list ap, t_printf *tab)
+void	ft_convert_uint(va_list ap, t_printf *backup)
 {
 	char	*str;
 	char	*sp;
 
-	tab->is_int = 1;
-	ft_size_u(ap, tab);
-	str = ft_uitoa(tab->u);
-	tab->len = ft_strlen(str);
-	str = ft_num_precision(str, tab);
-	tab->len = ft_strlen(str);
-	if (tab->u == 0 && tab->precision && tab->precision_width == 0
-		&& !tab->width)
+	backup->is_int = 1;
+	ft_size_u(ap, backup);
+	str = ft_uitoa(backup->u);
+	backup->len = ft_strlen(str);
+	str = ft_num_precision(str, backup);
+	backup->len = ft_strlen(str);
+	if (backup->u == 0 && backup->precision && backup->precision_width == 0
+		&& !backup->width)
 	{
 		free(str);
 		return ;
 	}
-	if (tab->u == 0 && tab->precision && tab->precision_width == 0)
+	if (backup->u == 0 && backup->precision && backup->precision_width == 0)
 	{
 		free(str);
 		str = ft_strdup(" ");
 	}
-	sp = ft_print_sp(tab);
-	ft_join_all(str, sp, tab);
+	sp = ft_print_sp(backup);
+	ft_join_all(str, sp, backup);
 }
